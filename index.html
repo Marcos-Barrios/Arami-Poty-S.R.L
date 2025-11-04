@@ -1,0 +1,109 @@
+<!doctype html>
+
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Arami Poty — Macetas</title>
+  <style>
+    :root{
+      --rosa-pastel:#f7c9d4;
+      --rosa-claro:#fde6eb;
+      --blanco:#ffffff;
+      --texto:#402832;
+      --accent:#f28da5;
+      --card-shadow:0 6px 18px rgba(64,40,50,0.08);
+    }
+    *{box-sizing:border-box}
+    body{font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0; background:linear-gradient(180deg,var(--rosa-claro),var(--blanco)); color:var(--texto)}.loading-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.95));z-index:9999;flex-direction:column;transition:opacity .6s ease,visibility .6s}
+.loading-overlay.hidden{opacity:0;visibility:hidden}
+.pot-logo{width:140px;height:140px;border-radius:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,0.08);background-image:url('pot-texture.png');background-size:cover;background-position:center}
+.pot-svg{width:80px;height:80px;filter:drop-shadow(0 6px 12px rgba(0,0,0,0.08))}
+.loading-text{margin-top:18px;font-weight:600;color:var(--texto)}
+
+header{display:flex;align-items:center;gap:16px;padding:22px 28px;background:linear-gradient(90deg,var(--rosa-pastel),rgba(255,255,255,0.6));backdrop-filter:blur(6px)}
+.brand{display:flex;align-items:center;gap:12px}
+.brand .logo-small{width:56px;height:56px;border-radius:12px;background-image:url('pot-texture.png');background-size:cover;background-position:center;box-shadow:var(--card-shadow)}
+h1{margin:0;font-size:20px;color:var(--texto)}
+.whatsapp{margin-left:auto}
+.whatsapp a{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;background:var(--accent);color:var(--blanco);text-decoration:none;border-radius:12px;font-weight:600}
+
+main{padding:28px}
+.intro{display:flex;gap:20px;align-items:center;margin-bottom:18px}
+.intro p{margin:0;color:#653a47}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
+.card{background:var(--blanco);border-radius:14px;padding:12px;box-shadow:var(--card-shadow);display:flex;flex-direction:column;gap:10px}
+.thumb{height:180px;border-radius:10px;background:#eee;background-size:cover;background-position:center}
+.meta{display:flex;align-items:center;justify-content:space-between}
+.price{font-weight:700;color:var(--accent)}
+.actions{display:flex;gap:8px}
+button{padding:8px 10px;border-radius:10px;border:0;font-weight:600;cursor:pointer}
+.btn-buy{background:var(--accent);color:#fff}
+.btn-ws{background:transparent;border:2px solid var(--accent);color:var(--texto)}
+
+footer{padding:20px;text-align:center;color:#6b6b6b}
+
+@media (max-width:560px){.loading-overlay{padding:20px}.pot-logo{width:110px;height:110px}.thumb{height:140px}}
+
+  </style>
+</head>
+<body>
+  <div id="loading" class="loading-overlay">
+    <div class="pot-logo" id="potLogo">
+      <svg class="pot-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g fill="none" stroke="#fff" stroke-width="1.6">
+          <path d="M12 28c0 0 4-10 20-10s20 10 20 10v10c0 4-3 8-6 8H18c-3 0-6-4-6-8V28z" fill="#f28da5" stroke="rgba(0,0,0,0.06)" />
+          <rect x="16" y="10" width="32" height="8" rx="2" fill="#e76f91"/>
+        </g>
+      </svg>
+    </div>
+    <div class="loading-text">Cargando...</div>
+  </div>  <header>
+    <div class="brand">
+      <div class="logo-small"></div>
+      <div>
+        <h1>Arami Poty</h1>
+        <div style="font-size:12px;color:#7a4956">Macetas artesanales · Envíos locales</div>
+      </div>
+    </div>
+    <div class="whatsapp">
+      <a id="whatsappLink" href="https://wa.me/5950981723557?text=Hola%20Arami%20Poty!%20Quiero%20informaci%C3%B3n%20sobre%20las%20macetas" target="_blank">💬 Contacto</a>
+    </div>
+  </header>  <main>
+    <div class="intro">
+      <div style="flex:1">
+        <h2 style="margin:0 0 6px 0">Nuestras macetas</h2>
+        <p style="margin:0;color:#653a47">Seleccioná entre modelos artesanales con texturas únicas. Hacé clic en el botón de WhatsApp para preguntar por stock o envíos.</p>
+      </div>
+    </div><section class="grid" id="productGrid"></section>
+
+  </main>  <footer>
+    © <span id="year"></span> Arami Poty — Todos los derechos reservados
+  </footer>  <script>
+    const products = [
+      {id:1,name:'Maceta Rosa Suave',price:45000,image:'products/pot1.jpg'},
+      {id:2,name:'Maceta Pastel Corazón',price:52000,image:'products/pot2.jpg'},
+      {id:3,name:'Maceta Minimal Flor',price:38000,image:'products/pot3.jpg'},
+      {id:4,name:'Maceta Colgante Dulce',price:61000,image:'products/pot4.jpg'}
+    ];
+
+    function formatPrice(n){ return new Intl.NumberFormat('es-PY').format(n) + ' Gs'; }
+
+    const grid=document.getElementById('productGrid');
+    products.forEach(p=>{
+      const card=document.createElement('article'); card.className='card';
+      const thumb=document.createElement('div'); thumb.className='thumb'; thumb.style.backgroundImage=`url('${p.image}')`;
+      const title=document.createElement('div'); title.textContent=p.name;
+      const meta=document.createElement('div'); meta.className='meta';
+      const price=document.createElement('div'); price.className='price'; price.textContent=formatPrice(p.price);
+      const actions=document.createElement('div'); actions.className='actions';
+      const buy=document.createElement('button'); buy.className='btn-buy'; buy.textContent='Comprar'; buy.onclick=()=>alert('Para comprar, envianos un WhatsApp o configura tu método de pago.');
+      const ws=document.createElement('button'); ws.className='btn-ws'; ws.textContent='WhatsApp'; ws.onclick=()=>window.open(`https://wa.me/5950981723557?text=Hola%20quiero%20informaci%C3%B3n%20sobre%20${encodeURIComponent(p.name)}`,'_blank');
+      actions.append(buy,ws); meta.append(price,actions); card.append(thumb,title,meta); grid.append(card);
+    });
+
+    window.addEventListener('load',()=>{setTimeout(()=>document.getElementById('loading').classList.add('hidden'),1100)});
+    document.getElementById('year').textContent=new Date().getFullYear();
+  </script></body>
+</html>
